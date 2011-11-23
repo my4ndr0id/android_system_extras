@@ -32,6 +32,7 @@ OUTPUT_FILE=$2
 EXT_VARIANT=$3
 MOUNT_POINT=$4
 SIZE=$5
+EXTRA_ARGS=
 
 case $EXT_VARIANT in
   ext4) ;;
@@ -47,9 +48,14 @@ if [ -z $SIZE ]; then
     SIZE=128M
 fi
 
-MAKE_EXT4FS_CMD="make_ext4fs $ENABLE_SPARSE_IMAGE -l $SIZE -a $MOUNT_POINT $OUTPUT_FILE $SRC_DIR"
+if [ $SIZE -lt 8192000 ]; then
+    EXTRA_ARGS="-b 1024"
+fi
+
+MAKE_EXT4FS_CMD="make_ext4fs $ENABLE_SPARSE_IMAGE -l $SIZE -a $MOUNT_POINT $EXTRA_ARGS $OUTPUT_FILE $SRC_DIR"
 echo $MAKE_EXT4FS_CMD
 $MAKE_EXT4FS_CMD
+
 if [ $? -ne 0 ]; then
   exit 4
 fi
