@@ -210,7 +210,8 @@ int pm_process_destroy(pm_process_t *proc) {
 }
 
 #define INITIAL_MAPS 10
-#define MAX_LINE 256
+#define MAX_LINE 1024
+#define MAX_NAME_LEN 256
 #define MAX_PERMS 5
 
 /* 
@@ -222,7 +223,7 @@ int pm_process_destroy(pm_process_t *proc) {
 
 static int read_maps(pm_process_t *proc) {
     char filename[MAX_FILENAME];
-    char line[MAX_LINE], name[MAX_LINE], perms[MAX_PERMS];
+    char line[MAX_LINE], name[MAX_NAME_LEN], perms[MAX_PERMS];
     FILE *maps_f;
     pm_map_t *map, **maps, **new_maps;
     int maps_count, maps_size;
@@ -261,7 +262,7 @@ static int read_maps(pm_process_t *proc) {
 
         map->proc = proc;
 
-        sscanf(line, "%lx-%lx %s %lx %*s %*d %" S(MAX_LINE) "s",
+        sscanf(line, "%lx-%lx %s %lx %*s %*d %" S(MAX_NAME_LEN) "s",
                &map->start, &map->end, perms, &map->offset, name);
 
         map->name = malloc(strlen(name) + 1);
